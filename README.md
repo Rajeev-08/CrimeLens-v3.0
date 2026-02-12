@@ -1,164 +1,89 @@
----
-
-# 🕵️‍♂️ CrimeLens: Intelligent Crime Analytics & Safe Navigation
-
-CrimeLens is a **full-stack geospatial intelligence platform** designed to analyze crime data, predict risks, and provide **safe navigation routes**.
-It combines **advanced 2D/3D visualization**, **machine learning forecasting**, and **public sentiment analysis** into a unified, interactive dashboard.
-
-Built with **FastAPI (Python)** and **React**, CrimeLens integrates **Google Gemini AI** for natural language insights and **OSMnx** for intelligent street-network routing.
 
 ---
 
-## ✨ Key Features
+# 🕵️‍♂️ CrimeLens v3.0
 
-### 📍 Unified Interactive Map
+**CrimeLens** is an advanced AI-powered crime intelligence platform designed to analyze historical data, predict future risks, and provide real-time surveillance capabilities. It bridges the gap between raw data and actionable security insights using machine learning, computer vision, and generative AI.
 
-* 2D visualization using **Leaflet**
-* Toggleable layers:
+## 🚀 Key Features
 
-  * Crime heatmaps
-  * Hotspots (K-Means clustering)
-  * Police stations
-  * Hospitals
+### 📊 Intelligence Dashboard
 
-### 🛡️ Safe Navigation Routing
+* **Unified Interactive Map:** 2D heatmap overlays, hotspot clustering, and amenity mapping (Police/Hospitals) using Leaflet.
+* **3D Density Visualization:** Immersive 3D hexagonal layers (`deck.gl`) to visualize crime volume and severity in urban environments.
+* **Temporal Analysis:** Time-series forecasting (using Prophet) to predict crime trends over the next 12 months.
+* **Risk Prediction:** Machine learning models (XGBoost) that calculate risk levels based on time, location, and environmental factors.
 
-* Calculates **Fastest** vs **Safest** walking routes
-* Uses **Dijkstra’s algorithm**
-* Edge weights adjusted by local crime density
+### 👁️ Real-Time Surveillance
 
-### 🏙️ 3D Crime Density Mapping
+* **Live Video Monitoring:** Process webcam or uploaded video feeds in real-time.
+* **Weapon Detection:** Integrated **YOLOv8/11** model to detect firearms and knives.
+* **Violence Detection:** Custom **MobileNetV2 + LSTM** architecture to recognize violent actions and fights.
 
-* Immersive **3D Hexbin visualization**
-* Built using **Deck.gl**
-* Highlights high-density crime zones
+### 🧭 Safety & Perception
 
-### 📈 Predictive Analytics
+* **Public Perception Engine:** Scrapes and analyzes local news headlines using NLP (`TextBlob`) to generate a "Public Fear Index."
+* **AI Safety Assistant:** A chat interface powered by **Google Gemini 1.5 Flash** for safety tips and situational advice.
 
-* **Time-Series Forecasting**
+### 📝 Reporting
 
-  * Uses **Facebook Prophet**
-  * Predicts crime trends for the next 12 months
-* **Risk Modeling**
-
-  * **XGBoost classifier**
-  * Determines crime severity based on location and time
-
-### 📰 Public Sentiment Engine
-
-* NLP analysis of local news headlines
-* Uses **TextBlob**
-* Computes:
-
-  * Sentiment score
-  * **Public Fear Index**
-
-### 🤖 AI Safety Assistant
-
-* Chat-based safety assistant
-* Powered by **Google Gemini**
-* Provides:
-
-  * Safety tips
-  * Area summaries
-  * Risk explanations
-
-### 📄 Automated Reporting
-
-* One-click **PDF crime intelligence reports**
+* **Executive Summaries:** One-click generation of professional PDF crime intelligence reports with AI-written executive summaries.
+* **Incident Reporting:** User-facing tools to pin and report suspicious activity directly on the map.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ System Architecture
 
-### Backend
+### Backend (`/backend`)
 
-* **Framework:** FastAPI
-* **Data Processing:** Pandas, NumPy
-* **Machine Learning:**
+* **Framework:** FastAPI (Python)
+* **ML & Data:** Pandas, Scikit-learn (KMeans), XGBoost, Prophet
+* **Computer Vision:** OpenCV, PyTorch, Ultralytics YOLO
+* **Generative AI:** Google GenAI SDK (Gemini 1.5 Flash)
+* **Geospatial:** OSMnx, NetworkX (for routing)
 
-  * Scikit-learn (K-Means)
-  * XGBoost
-  * Prophet
-* **Geospatial:** OSMnx, NetworkX
-* **AI / NLP:** Google Generative AI (Gemini), TextBlob
+### Frontend (`/frontend`)
 
-### Frontend
-
-* **Framework:** React (Create React App)
-* **Styling:** Tailwind CSS, Headless UI
-* **Visualization:**
-
-  * Deck.gl
-  * React-Leaflet
-  * Chart.js
-  * OGL (WebGL shaders)
-* **State & Networking:** Axios
+* **Framework:** React.js
+* **Styling:** Tailwind CSS
+* **Visualization:** React-Leaflet, Deck.gl, Chart.js
+* **Effects:** OGL (WebGL for Aurora/Galaxy backgrounds)
 
 ---
 
-## 🚀 Getting Started
+## 📦 Installation & Setup
 
 ### Prerequisites
 
-* Python **3.9+**
-* Node.js **16+**
-* Git
+* Python 3.9+
+* Node.js & npm
+* Google Gemini API Key
+* NewsAPI Key (Optional, for Sentiment analysis)
 
----
-
-### 1️⃣ Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/crimelens.git
-cd crimelens
-```
-
----
-
-### 2️⃣ Backend Setup
+### 1. Backend Setup
 
 ```bash
 cd backend
 
 # Create virtual environment
 python -m venv venv
-
-# Activate virtual environment
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
-```
 
-#### Environment Configuration (`.env`)
+# Create .env file
+echo "GEMINI_API_KEY=your_key_here" > .env
+echo "NEWS_API_KEY=your_news_key_here" >> .env
 
-Create a `.env` file inside the `backend/` directory:
-
-```env
-# Required for AI features
-GOOGLE_API_KEY=your_google_gemini_key
-
-# Optional: News sentiment analysis
-NEWS_API_KEY=your_newsapi_org_key
-```
-
-#### Run the Backend Server
-
-```bash
+# Run the server
 uvicorn app.main:app --reload
+
 ```
 
-📍 Backend available at:
-`http://localhost:8000`
+*The backend runs on `http://127.0.0.1:8000*`
 
----
-
-### 3️⃣ Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 cd frontend
@@ -166,112 +91,52 @@ cd frontend
 # Install dependencies
 npm install
 
-# Start the frontend
+# Start the application
 npm start
+
 ```
 
-📍 Frontend available at:
-`http://localhost:3000`
+*The frontend runs on `http://localhost:3000*`
 
 ---
 
-## 📊 Data Format
+## 🖥️ Usage Guide
 
-Upload a CSV file via the sidebar.
-The system works best with **LAPD-style datasets**, but any CSV with the following columns is supported:
+1. **Upload Data:**
+* On the Welcome screen, select **"Upload Dataset"**.
+* Upload a CSV file containing crime data (Standard LAPD format supported: `DATE OCC`, `TIME OCC`, `LAT`, `LON`, `Crm Cd Desc`).
 
-| Column Name | Description        | Example       |
-| ----------- | ------------------ | ------------- |
-| DATE OCC    | Date of occurrence | 01/20/2024    |
-| TIME OCC    | Time (24h)         | 1330 or 13:30 |
-| LAT         | Latitude           | 34.0522       |
-| LON         | Longitude          | -118.2437     |
-| Crm Cd Desc | Crime description  | BURGLARY      |
-| AREA NAME   | Area / District    | Central       |
 
-> **Note:** If `Severity` is not provided, CrimeLens computes it automatically based on crime type.
+2. **Analyze Trends:**
+* Use the **Sidebar** to filter by crime type or area.
+* Switch tabs to view **3D Density**, **Severity Breakdown**, or **Predictions**.
 
----
 
-## 🧭 Usage Guide
+3. **Surveillance Mode:**
+* From the Home screen, select **"Live Surveillance"**.
+* Choose input source (Webcam or File) and Detection Mode (Weapon or Violence).
 
-1. **Upload Data**
-   Upload a CSV file from the sidebar.
 
-2. **Apply Filters**
-   Filter by:
+4. **Export Reports:**
+* Click the **"Export Report"** button in the dashboard to download a comprehensive PDF summary.
 
-   * Area
-   * Crime type
-   * Severity
 
-3. **Explore the Map**
-
-   * Toggle layers (heatmap, hotspots, services)
-   * Click **Start Navigation** to select source & destination
-   * Compare safest vs fastest routes
-
-4. **3D View**
-
-   * Switch to the **3D Density tab**
-   * Use `Ctrl + Click` to rotate the map
-
-5. **Analytics**
-
-   * View crime forecasts in the **Time-Series tab**
-   * Analyze sentiment in the **Public Sentiment tab**
-
-6. **AI Assistant**
-
-   * Click the floating chat button
-   * Ask questions like:
-
-     > “Is this area safe at night?”
 
 ---
 
-## 📂 Project Structure
+## ⚠️ Important Notes
 
-```plaintext
-crimelens/
-├── backend/
-│   ├── app/
-│   │   ├── services/      # ML, Routing, Analytics Logic
-│   │   ├── main.py        # FastAPI entry point
-│   │   └── models.py     # Pydantic schemas
-│   └── requirements.txt
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── components/   # Reusable UI components
-│       ├── services/     # API connectors
-│       ├── views/        # Dashboard views
-│       └── App.js
-└── README.md
-```
+* **Model Weights:** Ensure `yolov5su.pt` (or `best.pt`) and `violence_model.pth` are placed in the `backend/` root directory for surveillance features to work.
+* **API Quotas:** The system defaults to `gemini-1.5-flash` to respect free tier limits. Heavy usage may trigger 429 errors.
+* **Map Data:** The system caches OpenStreetMap queries in `backend/cache/` to speed up subsequent loads.
 
 ---
 
-## ⚠️ Notes
+## 📜 License
 
-* **First Routing Request:**
-  OSMnx downloads OpenStreetMap data on first use (10–20 seconds).
-
-* **Browser Requirements:**
-  WebGL-enabled browser required (Chrome, Firefox, Edge).
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome 🎉
-Feel free to open an issue or submit a pull request for improvements or bug fixes.
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-See the `LICENSE` file for details.
-
----
+**Developed for CrimeLens Inc.**
+*Turning Data into Defense.*
