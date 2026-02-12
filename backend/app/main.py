@@ -543,6 +543,14 @@ def get_incidents():
     """
     return {"incidents": incidents_db}
 
+@app.get("/api/surveillance/stop")
+async def stop_video_feed():
+    """
+    Explicitly stops the video capture and releases hardware locks.
+    """
+    video_service.stop_stream()
+    return {"message": "Stream stopped successfully"}
+
 @app.get("/")
 def read_root():
     return {"status": "CrimeLens API is running"}

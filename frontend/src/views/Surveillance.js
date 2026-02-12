@@ -3,13 +3,20 @@ import axios from 'axios';
 
 const Surveillance = ({ onBack }) => {
     const [streamSource, setStreamSource] = useState(null); 
-    const [detectionMode, setDetectionMode] = useState("weapon"); // 'weapon' or 'violence'
+    const [detectionMode, setDetectionMode] = useState("weapon"); // 'weapon', 'violence', 'shoplifting'
     const [isUploading, setIsUploading] = useState(false);
 
     const handleWebcamStart = () => {
         setStreamSource("webcam");
     };
-
+    const handleStopStream = async () => {
+    try {
+        await axios.get("http://localhost:8000/api/surveillance/stop");
+        setStreamSource(null); // This clears the <img> tag in the UI
+    } catch (err) {
+        console.error("Failed to stop stream", err);
+    }
+};
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -41,29 +48,41 @@ const Surveillance = ({ onBack }) => {
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Sidebar Controls */}
-                <div className="w-72 bg-gray-800 p-4 border-r border-gray-700 flex flex-col gap-8">
+                <div className="w-72 bg-gray-800 p-4 border-r border-gray-700 flex flex-col gap-8 overflow-y-auto">
                     
                     {/* Input Source Section */}
-                    <div>
-                        <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">1. Input Source</h3>
-                        <div className="flex flex-col gap-2">
-                            <button 
-                                onClick={handleWebcamStart}
-                                className={`p-3 rounded text-sm font-medium transition-colors border ${streamSource === 'webcam' ? 'bg-blue-900/30 border-blue-500 text-blue-400' : 'bg-gray-700 border-transparent hover:bg-gray-600'}`}
-                            >
-                                📷 Live Webcam
-                            </button>
-                            <label className={`p-3 rounded text-sm font-medium transition-colors border cursor-pointer text-center ${streamSource && streamSource !== 'webcam' ? 'bg-blue-900/30 border-blue-500 text-blue-400' : 'bg-gray-700 border-transparent hover:bg-gray-600'}`}>
-                                {isUploading ? "Uploading..." : "📁 Upload Footage"}
-                                <input type="file" className="hidden" onChange={handleFileUpload} accept="video/*" />
-                            </label>
+                        <div>
+                            <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">1. Input Source</h3>
+                            <div className="flex flex-col gap-2">
+                                <button 
+                                    onClick={handleWebcamStart}
+                                    className={`p-3 rounded text-sm font-medium transition-colors border ${streamSource === 'webcam' ? 'bg-blue-900/30 border-blue-500 text-blue-400' : 'bg-gray-700 border-transparent hover:bg-gray-600'}`}
+                                >
+                                    📷 Live Webcam
+                                </button>
+                                <label className={`p-3 rounded text-sm font-medium transition-colors border cursor-pointer text-center ${streamSource && streamSource !== 'webcam' ? 'bg-blue-900/30 border-blue-500 text-blue-400' : 'bg-gray-700 border-transparent hover:bg-gray-600'}`}>
+                                    {isUploading ? "Uploading..." : "📁 Upload Footage"}
+                                    <input type="file" className="hidden" onChange={handleFileUpload} accept="video/*" />
+                                </label>
+
+                                {/* ✅ NEW: CLOSE BUTTON */}
+                                {streamSource && (
+                                    <button 
+                                        onClick={handleStopStream}
+                                        className="mt-2 p-2 rounded text-xs font-bold bg-red-600/20 border border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition-all"
+                                    >
+                                        🛑 Close Current Feed
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
                     {/* Detection Mode Section */}
                     <div>
                         <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">2. AI Detection Mode</h3>
                         <div className="flex flex-col gap-2">
+                            
+                            {/* WEAPON MODE */}
                             <button 
                                 onClick={() => setDetectionMode("weapon")}
                                 className={`p-3 rounded text-left text-sm font-medium border transition-all ${
@@ -79,6 +98,7 @@ const Surveillance = ({ onBack }) => {
                                 <span className="text-xs opacity-70 font-normal mt-1 block">YOLOv11 + ByteTrack</span>
                             </button>
 
+                            {/* VIOLENCE MODE */}
                             <button 
                                 onClick={() => setDetectionMode("violence")}
                                 className={`p-3 rounded text-left text-sm font-medium border transition-all ${
@@ -93,6 +113,28 @@ const Surveillance = ({ onBack }) => {
                                 </div>
                                 <span className="text-xs opacity-70 font-normal mt-1 block">3D-CNN / LSTM</span>
                             </button>
+
+                            {/* SHOPLIFTING MODE (NEW) */}
+                                <button 
+                                    onClick={() => setDetectionMode("shoplifting")}
+                                    className={`p-3 rounded text-left text-sm font-medium border transition-all ${
+                                        detectionMode === 'shoplifting' 
+                                        ? 'bg-purple-900/40 border-purple-500 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]' 
+                                        : 'bg-gray-700 border-transparent text-gray-300 hover:bg-gray-600'
+                                    }`}
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <span>
+                                            Shoplifting Detection 
+                                            <span className="text-[10px] text-red-500 ml-1 font-bold animate-pulse">
+                                                (experimental)
+                                            </span>
+                                        </span>
+                                        {detectionMode === 'shoplifting' && <span className="w-2 h-2 bg-purple-500 rounded-full"></span>}
+                                    </div>
+                                    <span className="text-xs opacity-70 font-normal mt-1 block">ResNet18 / Behavioral</span>
+                                </button>
+
                         </div>
                     </div>
 
