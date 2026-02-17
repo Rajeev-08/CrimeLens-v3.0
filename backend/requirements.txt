@@ -9,7 +9,7 @@ python-multipart
 plotly
 requests
 textblob
-google-generativeai
+google-genai
 python-dotenv
 opencv-python
 torch
